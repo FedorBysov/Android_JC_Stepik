@@ -1,4 +1,4 @@
-package com.example.jcstepik.presentation.main
+package com.example.jcstepik.domain.entity
 
 sealed class AuthState {
 
@@ -7,5 +7,6 @@ sealed class AuthState {
     object Authorized : AuthState()
 
     object NonAuthorized : AuthState()
+
 
 }

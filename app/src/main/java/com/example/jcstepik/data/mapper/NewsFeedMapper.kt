@@ -1,18 +1,18 @@
 package com.example.jcstepik.data.mapper
 
-import com.example.jcstepik.R
 import com.example.jcstepik.data.model.CommentsResponseDto
 import com.example.jcstepik.data.model.NewsFeedResponseDto
-import com.example.jcstepik.domain.FeedPost
-import com.example.jcstepik.domain.PostComment
-import com.example.jcstepik.domain.StatisticItem
-import com.example.jcstepik.domain.StatisticType
+import com.example.jcstepik.domain.entity.FeedPost
+import com.example.jcstepik.domain.entity.PostComment
+import com.example.jcstepik.domain.entity.StatisticItem
+import com.example.jcstepik.domain.entity.StatisticType
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 import kotlin.math.absoluteValue
 
-class NewsFeedMapper {
+class NewsFeedMapper @Inject constructor(){
 
     fun mapResponseToPost(responseDto: NewsFeedResponseDto): List<FeedPost> {
 

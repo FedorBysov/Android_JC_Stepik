@@ -1,9 +1,8 @@
-package com.example.jcstepik.domain
+package com.example.jcstepik.domain.entity
 
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.navigation.NavType
-import com.example.jcstepik.R
 import com.google.gson.Gson
 import kotlinx.parcelize.Parcelize
 
@@ -15,7 +14,7 @@ data class FeedPost(
     val publicationDate: String,
     val communityImageUrl: String,
     val contentText: String,
-    val contentImageUrl: String? ,
+    val contentImageUrl: String?,
     val statistics: List<StatisticItem>,
     val isLiked:Boolean
 

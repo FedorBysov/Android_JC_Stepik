@@ -16,23 +16,24 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource.Companion.SideEffect
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.jcstepik.domain.FeedPost
+import com.example.jcstepik.domain.entity.FeedPost
+import com.example.jcstepik.presentation.ViewModelFactory
 import com.example.jcstepik.ui.theme.DarkBlue
 
 @Composable
 fun NewsFeedScreen(
+    viewModelFactory: ViewModelFactory,
     paddingValues: PaddingValues,
     onCommentClickListener: (FeedPost) -> Unit
 ) {
 
-    val viewModel: NewsFeedViewModel = viewModel()
-    val screenState = viewModel.screenState.observeAsState(NewsFeedsScreenState.Initial)
+    val viewModel: NewsFeedViewModel = viewModel(factory = viewModelFactory)
+    val screenState = viewModel.screenState.collectAsState(NewsFeedsScreenState.Initial)
 
     when(val currentState = screenState.value){
         is NewsFeedsScreenState.Posts -> {

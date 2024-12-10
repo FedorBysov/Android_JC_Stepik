@@ -1,6 +1,4 @@
-package com.example.jcstepik.domain
-
-import com.example.jcstepik.R
+package com.example.jcstepik.domain.entity
 
 data class PostComment(
     val id: Long,

@@ -1,61 +1,69 @@
 package com.example.jcstepik.presentation.news
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.jcstepik.data.NewsFeedRepository
-import com.example.jcstepik.domain.FeedPost
-import com.example.jcstepik.domain.StatisticItem
+import com.example.jcstepik.data.NewsFeedRepositoryImpl
+import com.example.jcstepik.domain.entity.FeedPost
+import com.example.jcstepik.domain.useCase.ChangeLikeStatusUseCase
+import com.example.jcstepik.domain.useCase.DeletePostUseCase
+import com.example.jcstepik.domain.useCase.GetRecommendationsUseCase
+import com.example.jcstepik.domain.useCase.LoadNextDataUseCase
+import com.example.jcstepik.extensions.mergeWith
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
-
-
-
-    private val initialState = NewsFeedsScreenState.Initial
-
-    private val _screenState = MutableLiveData<NewsFeedsScreenState>(initialState)
-    val screenState: LiveData<NewsFeedsScreenState> = _screenState
-
-    private val repository = NewsFeedRepository(application)
+class NewsFeedViewModel @Inject constructor(
+    private val getRecommendationsUseCase: GetRecommendationsUseCase,
+    private val loadNextDataUseCase: LoadNextDataUseCase,
+    private val changeLikeStatusUseCase: ChangeLikeStatusUseCase,
+    private val deletePostUseCase: DeletePostUseCase,
+) : ViewModel() {
 
 
-    init {
-        _screenState.value = NewsFeedsScreenState.Loading
-        loadRecommendations()
+    private val exceptionHandler = CoroutineExceptionHandler { _, _ ->
+        Log.d("NewsFeedViewModel", "Exception caught by exception handler")
     }
 
 
-    private fun loadRecommendations() {
+    private val recommendationsFlow = getRecommendationsUseCase()
+
+    private val loadNextDataFlow = MutableSharedFlow<NewsFeedsScreenState>()
+
+    val screenState = recommendationsFlow
+        .filter { it.isNotEmpty() }
+        .map { NewsFeedsScreenState.Posts(posts = it) as NewsFeedsScreenState }
+        .onStart { emit(NewsFeedsScreenState.Loading) }
+        .mergeWith(loadNextDataFlow)
+
+    fun loadNextRecommendations() {
         viewModelScope.launch {
-            val feedPosts = repository.loadRecommendations()
-            _screenState.value = NewsFeedsScreenState.Posts(posts = feedPosts)
+            loadNextDataFlow.emit(
+                NewsFeedsScreenState.Posts(
+                    posts = recommendationsFlow.value,
+                    nextDataIsLoading = true
+                )
+            )
+            loadNextDataUseCase()
         }
     }
 
-
-    fun loadNextRecommendations(){
-        _screenState.value = NewsFeedsScreenState.Posts(
-            posts = repository.feedPost,
-            nextDataIsLoading = true
-        )
-        loadRecommendations()
-    }
-
     fun changeLikeStatus(feedPost: FeedPost) {
-        viewModelScope.launch {
-            repository.changeLikeStatus(feedPost)
-            _screenState.value = NewsFeedsScreenState.Posts(posts = repository.feedPost)
+        viewModelScope.launch(exceptionHandler) {
+            changeLikeStatusUseCase(feedPost)
         }
     }
 
     fun remove(feedPost: FeedPost) {
-        viewModelScope.launch {
-            repository.deletePost(feedPost)
-            _screenState.value = NewsFeedsScreenState.Posts(posts = repository.feedPost)
+        viewModelScope.launch(exceptionHandler) {
+            deletePostUseCase(feedPost)
         }
     }
-
 }

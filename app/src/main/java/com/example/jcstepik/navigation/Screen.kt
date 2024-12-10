@@ -1,7 +1,7 @@
 package com.example.jcstepik.navigation
 
 import android.net.Uri
-import com.example.jcstepik.domain.FeedPost
+import com.example.jcstepik.domain.entity.FeedPost
 import com.google.gson.Gson
 
 sealed class Screen(

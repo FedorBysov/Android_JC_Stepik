@@ -1,39 +1,25 @@
 package com.example.jcstepik.presentation.comments
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.jcstepik.data.NewsFeedRepository
-import com.example.jcstepik.domain.FeedPost
-import com.example.jcstepik.domain.PostComment
-import kotlinx.coroutines.launch
+import com.example.jcstepik.data.NewsFeedRepositoryImpl
+import com.example.jcstepik.domain.entity.FeedPost
+import com.example.jcstepik.domain.useCase.GetCommentsUseCase
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class CommentsViewModel(
-    feedPost: FeedPost,
-    application: Application
-) :ViewModel() {
+class CommentsViewModel @Inject constructor(
+    private val feedPost: FeedPost,
+    private val getCommentsUseCase: GetCommentsUseCase
+) : ViewModel() {
 
 
 
-    private val repository = NewsFeedRepository(application)
-
-    private val _screenState = MutableLiveData<CommentsScreenState>(CommentsScreenState.Initialize)
-    val screenState: LiveData<CommentsScreenState> = _screenState
-
-    init {
-        loadComments(feedPost)
-    }
-
-    private fun loadComments(feedPost: FeedPost) {
-        viewModelScope.launch {
-            val comments = repository.getComments(feedPost)
-            _screenState.value = CommentsScreenState.Comments(
+    val screenState = getCommentsUseCase(feedPost)
+        .map {
+            CommentsScreenState.Comments(
                 feedPost = feedPost,
-                comments = comments
+                comments = it
             )
         }
-    }
-
 }

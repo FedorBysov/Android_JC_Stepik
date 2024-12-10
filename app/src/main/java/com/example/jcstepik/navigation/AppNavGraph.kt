@@ -4,8 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
-import com.example.jcstepik.domain.FeedPost
+import com.example.jcstepik.domain.entity.FeedPost
 
 
 @Composable

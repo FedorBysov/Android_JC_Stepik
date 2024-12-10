@@ -22,13 +22,14 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.jcstepik.navigation.AppNavGraph
 import com.example.jcstepik.navigation.rememberNavigationState
+import com.example.jcstepik.presentation.ViewModelFactory
 import com.example.jcstepik.presentation.comments.CommentScreen
 import com.example.jcstepik.presentation.news.NewsFeedScreen
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(viewModelFactory: ViewModelFactory) {
 
 
     val navigationState = rememberNavigationState()
@@ -93,6 +94,7 @@ fun MainScreen() {
             newsFeedScreenUI = {
 
                 NewsFeedScreen(
+                    viewModelFactory = viewModelFactory,
                     paddingValues = paddingValues,
                     onCommentClickListener = {
                         navigationState.navigateToComment(it)

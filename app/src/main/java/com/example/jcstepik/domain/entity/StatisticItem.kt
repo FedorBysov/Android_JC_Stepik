@@ -1,4 +1,4 @@
-package com.example.jcstepik.domain
+package com.example.jcstepik.domain.entity
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

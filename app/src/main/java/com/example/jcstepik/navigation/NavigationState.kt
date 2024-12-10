@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.jcstepik.domain.FeedPost
+import com.example.jcstepik.domain.entity.FeedPost
 
 class NavigationState(
     val navHostController: NavHostController

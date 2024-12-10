@@ -1,6 +1,6 @@
 package com.example.jcstepik.presentation.news
 
-import com.example.jcstepik.domain.FeedPost
+import com.example.jcstepik.domain.entity.FeedPost
 
 sealed class NewsFeedsScreenState {
 

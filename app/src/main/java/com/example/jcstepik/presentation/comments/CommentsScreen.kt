@@ -1,7 +1,6 @@
 package com.example.jcstepik.presentation.comments
 
 import android.app.Application
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,21 +23,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.jcstepik.R
-import com.example.jcstepik.domain.FeedPost
-import com.example.jcstepik.domain.PostComment
-import com.example.jcstepik.ui.theme.JCStepikTheme
+import com.example.jcstepik.domain.entity.FeedPost
+import com.example.jcstepik.domain.entity.PostComment
+import com.example.jcstepik.presentation.NewsFeedApplications
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,14 +44,15 @@ fun CommentScreen(
     feedPost: FeedPost
 ) {
 
-    val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(feedPost,
-            LocalContext.current.applicationContext as Application
-        )
-    )
+    val component = (LocalContext.current.applicationContext as NewsFeedApplications)
+        .component
+        .getComponentScreenFactory()
+        .create(feedPost)
 
-    val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initialize)
+    val viewModel: CommentsViewModel = viewModel(factory = component.getViewModelFactory())
+    val screenState = viewModel.screenState.collectAsState(CommentsScreenState.Initialize)
     val currentState = screenState.value
+
 
     if(currentState is CommentsScreenState.Comments){
         Scaffold(
@@ -84,7 +82,7 @@ fun CommentScreen(
                 ) {
                 items(
                     items = currentState.comments,
-                    key = { it.id }
+                    key = {it.id}
                 ){
                     comment ->
                     CommentItem(comment = comment)

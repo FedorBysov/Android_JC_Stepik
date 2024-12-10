@@ -1,7 +1,7 @@
 package com.example.jcstepik.presentation.comments
 
-import com.example.jcstepik.domain.FeedPost
-import com.example.jcstepik.domain.PostComment
+import com.example.jcstepik.domain.entity.FeedPost
+import com.example.jcstepik.domain.entity.PostComment
 
 sealed class CommentsScreenState {
 
